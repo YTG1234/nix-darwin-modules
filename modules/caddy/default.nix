@@ -13,7 +13,9 @@ let
     ([ cfg.config ] ++ (mapAttrsToList vhostToConfig cfg.virtualHosts)));
 
   formattedConfig = pkgs.runCommand "formattedCaddyFile" { } ''
-    ${cfg.package}/bin/caddy fmt ${configFile} > $out
+    mkdir -p $out
+    cp --no-preserve=mode ${configFile} $out/Caddyfile
+    ${cfg.package}/bin/caddy fmt --overwrite $out/Caddyfile
   '';
 
   tlsConfig = {
@@ -27,7 +29,7 @@ let
 
   adaptedConfig = pkgs.runCommand "caddy-config-adapted.json" { } ''
     ${cfg.package}/bin/caddy adapt \
-      --config ${formattedConfig} --adapter ${cfg.adapter} > $out
+      --config ${formattedConfig}/Caddyfile --adapter ${cfg.adapter} > $out
   '';
   tlsJSON = pkgs.writeText "tls.json" (builtins.toJSON tlsConfig);
 

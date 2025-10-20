@@ -8,6 +8,6 @@
     ./mysql
     ./php-fpm
     ./rabbitmq
-    ./mas
+    # ./mas # TODO: Fix MAS
   ];
 }
